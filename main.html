@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Zero-width inserter</title>
+</head>
+
+<style>
+    textarea {
+        height: 500px;
+        width: 500px;
+    }
+
+    button {
+        padding: 10px;
+    }
+</style>
+
+<body>
+    <h1>Insert zero-width characters to text</h1>
+    <p>Some social media platforms scan for "inappropriate" words, and may ban the poster for having those words in the post, 
+        even though the poster has no bad intentions. 
+        By inserting zero-width characters between words, this tool can prevent those "inappropriate" words from being detected.
+        This tool is not intended for unethical purposes.</p>
+    <textarea id="input" placeholder="Input text here" onchange="updateResult()"></textarea>
+    <textarea id="words" placeholder="Words to insert, separated by spaces"></textarea>
+    <br>
+    <button onclick="insertCharacters()">Start</button>
+    <br>
+    <p id="inputLen">Length of input text: </p>
+    <p id="len">Length of result: 0</p>
+    <textarea id="result" placeholder="Result"></textarea>
+</body>
+
+<script>
+    function insertCharacters() {
+        let zeroWidthChars = ["​", "‌", "‍"];
+        let inputText = document.querySelector("#input").value;
+        let words = document.querySelector("#words").value;
+
+        if (words.length > 0) {
+            for (let word of words.split(" ")) {
+                let insertedWord = word.split("");
+
+                for (let i = 0; i < 3; i++) {
+                    let startIndex = Math.floor(Math.random() * word.length);
+                    let index = Math.floor(Math.random() * 3);
+
+                    insertedWord.splice(startIndex, 0, zeroWidthChars[index]);
+                }
+                inputText = inputText.replace(word, insertedWord.join(""));
+            }
+        } else {
+            inputText = inputText
+                .split("")
+                .map(char => char + zeroWidthChars[Math.floor(Math.random() * 3)])
+                .join("");
+        }
+        navigator.clipboard.writeText(inputText);
+        document.querySelector("#result").value = inputText;
+        document.querySelector("#len").innerHTML = "Length: " + String(inputText.length);
+        alert("Copied to clipboard!");
+    }
+
+    function updateResult() {
+        document.querySelector("#inputLen").innerHTML = "Length of input text: " + document.querySelector("#input").value.length;
+        document.querySelector("#result").innerHTML = "";
+    }
+</script>
